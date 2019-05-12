@@ -13,9 +13,10 @@ class BaseOptions():
     It also gathers additional options defined in <modify_commandline_options> functions in both dataset class and model class.
     """
 
-    def __init__(self):
+    def __init__(self, args=None):
         """Reset the class; indicates the class hasn't been initailized"""
         self.initialized = False
+        self.args = args
 
     def initialize(self, parser):
         """Define the common options that are used in both training and test."""
@@ -68,13 +69,13 @@ class BaseOptions():
             parser = self.initialize(parser)
 
         # get the basic options
-        opt, _ = parser.parse_known_args()
+        opt, _ = parser.parse_known_args(self.args)
 
         # modify model-related parser options
         model_name = opt.model
         model_option_setter = models.get_option_setter(model_name)
         parser = model_option_setter(parser, self.isTrain)
-        opt, _ = parser.parse_known_args()  # parse again with new defaults
+        opt, _ = parser.parse_known_args(self.args)  # parse again with new defaults
 
         # modify dataset-related parser options
         dataset_name = opt.dataset_mode
@@ -83,7 +84,7 @@ class BaseOptions():
 
         # save and return the parser
         self.parser = parser
-        return parser.parse_args()
+        return parser.parse_args(self.args)
 
     def print_options(self, opt):
         """Print and save options
