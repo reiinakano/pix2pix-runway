@@ -19,20 +19,29 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import os
+import shutil
 
 import runway
 from runway.data_types import image
-
 
 from util.util import tensor2im
 from options.test_options import TestOptions
 from data.base_dataset import get_transform
 from models import create_model
 
-@runway.setup
-def setup():
+
+@runway.setup(options={'generator_checkpoint': runway.file(extension='.pth')})
+def setup(opts):
+    generator_checkpoint_path = opts['generator_checkpoint']
+    try:
+        os.makedirs('checkpoints/pretrained/')
+    except OSError:
+        pass
+    shutil.copy(generator_checkpoint_path, 'checkpoints/pretrained/latest_net_G.pth')
+
     opt = TestOptions(args=['--dataroot', '',
-                            '--name', 'horse2zebra_pretrained',
+                            '--name', 'pretrained',
                             '--model', 'test',
                             '--no_dropout']).parse()
     opt.num_threads = 0  # test code only supports num_threads = 1
