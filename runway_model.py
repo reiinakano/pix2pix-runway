@@ -42,8 +42,8 @@ def setup(opts):
 
     opt = TestOptions(args=['--dataroot', '',
                             '--name', 'pretrained',
-                            '--model', 'test',
-                            '--no_dropout']).parse()
+                            '--model', 'pix2pix',
+                            '--direction', 'BtoA']).parse()
     opt.num_threads = 0  # test code only supports num_threads = 1
     opt.batch_size = 1  # test code only supports batch_size = 1
     opt.serial_batches = True  # disable data shuffling; comment this line if results on randomly chosen images are needed.
@@ -65,7 +65,7 @@ def generate(model, args):
     input_nc = opt.output_nc if opt.direction == 'BtoA' else opt.input_nc
     transform = get_transform(opt, grayscale=(input_nc == 1))
     A = transform(orig_image)
-    input_obj = {'A': A.unsqueeze(0), 'A_paths': ''}
+    input_obj = {'A': A.unsqueeze(0), 'A_paths': '', 'B': A.unsqueeze(0), 'B_paths': ''}
 
     model.set_input(input_obj)
     model.test()
