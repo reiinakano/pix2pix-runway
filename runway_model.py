@@ -31,7 +31,8 @@ from data.base_dataset import get_transform
 from models import create_model
 
 
-@runway.setup(options={'generator_checkpoint': runway.file(extension='.pth')})
+@runway.setup(options={'generator_checkpoint': runway.file(description="Checkpoint for the generator",
+                                                           extension='.pth')})
 def setup(opts):
     generator_checkpoint_path = opts['generator_checkpoint']
     try:
@@ -55,8 +56,8 @@ def setup(opts):
 
 
 @runway.command(name='generate',
-                inputs={ 'image': image() },
-                outputs={ 'image': image() })
+                inputs={ 'image': image(description='Input image') },
+                outputs={ 'image': image(description='Output image') })
 def generate(model, args):
     opt = model['opt']
     model = model['model']
