@@ -25,6 +25,8 @@ import shutil
 import runway
 from runway.data_types import image
 
+from PIL import Image
+
 from util.util import tensor2im
 from options.test_options import TestOptions
 from data.base_dataset import get_transform
@@ -50,6 +52,7 @@ def setup(opts):
     opt.serial_batches = True  # disable data shuffling; comment this line if results on randomly chosen images are needed.
     opt.no_flip = True  # no flip; comment this line if results on flipped images are needed.
     opt.display_id = -1  # no visdom display; the test code saves the results to a HTML file.
+    opt.preprocess = 'none'  # Don't resize to a square
     model = create_model(opt)
     model.setup(opt)
     return {'model': model, 'opt': opt}
@@ -63,6 +66,7 @@ def generate(model, args):
     model = model['model']
 
     orig_image = args['image'].convert('RGB')
+    orig_size = orig_image.size
     input_nc = opt.output_nc if opt.direction == 'BtoA' else opt.input_nc
     transform = get_transform(opt, grayscale=(input_nc == 1))
     A = transform(orig_image)
@@ -74,7 +78,7 @@ def generate(model, args):
     im = tensor2im(visuals['fake_B'])
 
     return {
-        'image': im
+        'image': Image.fromarray(im).resize(orig_size)
     }
 
 
