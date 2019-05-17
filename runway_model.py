@@ -52,7 +52,6 @@ def setup(opts):
     opt.serial_batches = True  # disable data shuffling; comment this line if results on randomly chosen images are needed.
     opt.no_flip = True  # no flip; comment this line if results on flipped images are needed.
     opt.display_id = -1  # no visdom display; the test code saves the results to a HTML file.
-    opt.preprocess = 'none'  # Don't resize to a square
     model = create_model(opt)
     model.setup(opt)
     return {'model': model, 'opt': opt}
